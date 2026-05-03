@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Streikraft — Télécharger</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:       #0a0a0a;
+    --bg2:      #111111;
+    --border:   #1e1e1e;
+    --accent:   #e8c14a;
+    --accent2:  #c9a832;
+    --text:     #f0f0f0;
+    --muted:    #666;
+    --green:    #4ade80;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── GRID BG ── */
+  .grid-bg {
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(232,193,74,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(232,193,74,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── GLOW ── */
+  .glow {
+    position: fixed;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(232,193,74,0.06) 0%, transparent 70%);
+    top: -200px; left: 50%;
+    transform: translateX(-50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 48px;
+    background: rgba(10,10,10,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    letter-spacing: 4px;
+    color: var(--accent);
+  }
+
+  .nav-logo span { color: var(--text); }
+
+  .nav-badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 120px 24px 80px;
+  }
+
+  .version-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(232,193,74,0.08);
+    border: 1px solid rgba(232,193,74,0.2);
+    border-radius: 2px;
+    padding: 6px 16px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 32px;
+    animation: fadeDown 0.6s ease both;
+  }
+
+  .version-tag::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--green);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--green);
+    animation: pulse 2s ease infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(5rem, 15vw, 11rem);
+    line-height: 0.9;
+    letter-spacing: 6px;
+    color: var(--text);
+    animation: fadeDown 0.6s 0.1s ease both;
+  }
+
+  h1 em {
+    color: var(--accent);
+    font-style: normal;
+    display: block;
+  }
+
+  .subtitle {
+    font-size: 1.1rem;
+    font-weight: 500;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin: 24px 0 48px;
+    animation: fadeDown 0.6s 0.2s ease both;
+  }
+
+  /* ── DOWNLOAD BUTTON ── */
+  .btn-download {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    background: var(--accent);
+    color: #0a0a0a;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 4px;
+    padding: 18px 48px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+    transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+    animation: fadeDown 0.6s 0.3s ease both;
+  }
+
+  .btn-download:hover {
+    background: #f5d060;
+    transform: translateY(-3px);
+    box-shadow: 0 20px 60px rgba(232,193,74,0.3);
+  }
+
+  .btn-download:active { transform: translateY(0); }
+
+  .btn-download svg {
+    width: 20px; height: 20px;
+    animation: bounce 2s ease infinite;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(4px); }
+  }
+
+  .btn-size {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: rgba(10,10,10,0.5);
+    margin-top: 12px;
+    animation: fadeDown 0.6s 0.35s ease both;
+  }
+
+  /* ── SPECS ── */
+  .specs {
+    display: flex;
+    gap: 2px;
+    margin-top: 64px;
+    animation: fadeDown 0.6s 0.4s ease both;
+  }
+
+  .spec {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 16px 28px;
+    text-align: center;
+  }
+
+  .spec:first-child { clip-path: polygon(8px 0, 100% 0, 100% 100%, 0 100%, 0 8px); }
+  .spec:last-child  { clip-path: polygon(0 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%); }
+
+  .spec-val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    letter-spacing: 2px;
+    color: var(--accent);
+  }
+
+  .spec-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  /* ── FEATURES ── */
+  .features {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 80px 24px;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.5rem;
+    letter-spacing: 6px;
+    color: var(--text);
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .section-title span { color: var(--accent); }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 2px;
+  }
+
+  .feature {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 28px;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .feature:hover {
+    border-color: rgba(232,193,74,0.3);
+    background: rgba(232,193,74,0.03);
+  }
+
+  .feature-icon {
+    font-size: 1.8rem;
+    margin-bottom: 12px;
+  }
+
+  .feature-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    letter-spacing: 3px;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  .feature-desc {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* ── INSTALL STEPS ── */
+  .steps {
+    position: relative;
+    z-index: 1;
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 0 24px 100px;
+  }
+
+  .step {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+    margin-bottom: 32px;
+    opacity: 0;
+    transform: translateX(-20px);
+    animation: slideIn 0.5s ease forwards;
+  }
+
+  .step:nth-child(1) { animation-delay: 0.1s; }
+  .step:nth-child(2) { animation-delay: 0.2s; }
+  .step:nth-child(3) { animation-delay: 0.3s; }
+
+  .step-num {
+    flex-shrink: 0;
+    width: 44px; height: 44px;
+    background: var(--accent);
+    color: #0a0a0a;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+  }
+
+  .step-text strong {
+    display: block;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .step-text p {
+    font-size: 0.9rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid var(--border);
+    padding: 24px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  footer span {
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  footer .footer-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    letter-spacing: 4px;
+    color: var(--accent);
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    max-width: 900px;
+    margin: 0 auto 64px;
+    padding: 0 24px;
+  }
+
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .divider span {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 4px;
+    color: var(--muted);
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes slideIn {
+    to { opacity: 1; transform: translateX(0); }
+  }
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+<div class="glow"></div>
+
+<nav>
+  <div class="nav-logo">Streik<span>raft</span></div>
+  <div class="nav-badge">By Bincosa</div>
+</nav>
+
+<section class="hero">
+  <div class="version-tag">Version 6.0 — Stable</div>
+
+  <h1>STREIK<em>RAFT</em></h1>
+
+  <p class="subtitle">Le launcher Minecraft de la communauté</p>
+
+  <a class="btn-download" href="https://drive.google.com/uc?export=download&id=1anWjp8v_rY-31lQVZjb2644nwpBdi2mw">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+      <polyline points="7 10 12 15 17 10"/>
+      <line x1="12" y1="15" x2="12" y2="3"/>
+    </svg>
+    TÉLÉCHARGER
+  </a>
+  <div class="btn-size">Windows 10/11 · 16 MB · Gratuit</div>
+
+  <div class="specs">
+    <div class="spec">
+      <div class="spec-val">6.0</div>
+      <div class="spec-label">Version</div>
+    </div>
+    <div class="spec">
+      <div class="spec-val">WIN</div>
+      <div class="spec-label">Plateforme</div>
+    </div>
+    <div class="spec">
+      <div class="spec-val">16 MB</div>
+      <div class="spec-label">Taille</div>
+    </div>
+    <div class="spec">
+      <div class="spec-val">GRATUIT</div>
+      <div class="spec-label">Prix</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"><span>Fonctionnalités</span></div>
+
+<section class="features">
+  <div class="features-grid">
+    <div class="feature">
+      <div class="feature-icon">⚡</div>
+      <div class="feature-title">Installation automatique</div>
+      <div class="feature-desc">Minecraft et Java sont téléchargés et configurés automatiquement au premier lancement.</div>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🎮</div>
+      <div class="feature-title">Discord Rich Presence</div>
+      <div class="feature-desc">Affiche automatiquement ton activité sur Discord pendant que tu joues.</div>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🔐</div>
+      <div class="feature-title">Comptes Streikraft</div>
+      <div class="feature-desc">Système de comptes dédié. Connecte-toi avec ton pseudo Streikraft.</div>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🎨</div>
+      <div class="feature-title">Skins personnalisés</div>
+      <div class="feature-desc">Importe et utilise ton propre skin directement depuis le launcher.</div>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🚀</div>
+      <div class="feature-title">Connexion directe</div>
+      <div class="feature-desc">Rejoint le serveur Streikraft en un clic, sans configuration manuelle.</div>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🛡️</div>
+      <div class="feature-title">Aucun virus</div>
+      <div class="feature-desc">100% open-source, compilé avec PyInstaller. Aucun adware, aucun tracking.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"><span>Installation</span></div>
+
+<section class="steps">
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-text">
+      <strong>Télécharge l'installeur</strong>
+      <p>Clique sur le bouton de téléchargement en haut de la page. Le fichier fait 16 MB.</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-text">
+      <strong>Lance StreikraftInstaller.exe</strong>
+      <p>Double-clique sur le fichier téléchargé. Si Windows affiche un avertissement SmartScreen, clique sur "Informations complémentaires" puis "Exécuter quand même".</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-text">
+      <strong>Joue !</strong>
+      <p>Un raccourci apparaît sur ton Bureau. Lance Streikraft, connecte-toi avec ton compte et clique sur Jouer. Minecraft se télécharge automatiquement.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>© 2024 Bincosa — Tous droits réservés</span>
+  <div class="footer-logo">STREIKRAFT</div>
+  <span>Windows 10 / 11</span>
+</footer>
+
+</body>
+</html>
